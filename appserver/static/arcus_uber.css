@@ -1,0 +1,42 @@
+/* We don't want any white panels. Make it all background color */
+.dashboard-row {
+    background: transparent !important;
+}
+.dashboard-panel {
+    background: transparent !important;
+}
+
+/* This removes the default header title and description */
+.dashboard-header h2 {
+    display:none;
+}
+.dashboard-header p {
+    display:none;
+}
+
+/* Add our own styling */
+#arcus_header h1 {
+    font-size: 42px;
+    font-weight: 300;
+}
+#arcus_header h2 {
+ font-size: 24px;
+ padding-top: 4px;
+}
+#arcus .panel-body {
+    padding: 24px !important;
+}
+
+
+.arcus .title {
+    font-size: 36px; 
+    margin-right: 16px;
+}
+
+.arcus .icon {
+    font-size: 18px;
+}
+
+.arcus .icon i {
+    margin-right: 8px;
+}

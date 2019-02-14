@@ -1,0 +1,139 @@
+<dashboard script="arcus_uber.js" stylesheet="arcus_uber.css">
+	<label>Start</label>
+	<description>This is the overview dashboard when the app loads.</description>
+	<row id="arcus_header">
+		<html>
+			<h1>Uber Splunk App</h1>
+			<h2>Rider Reporting</h2>
+		</html>
+	</row>
+	<row>
+		<panel>
+			<html>
+				<div class="arcus">
+					<i class="title fas fa-car" />
+					<span style="font-size:30px; font-weight: 100;">About Me</span>
+					<hr />
+					<p>For the past decade I've traveled around the country deploying big data solutions to hundreds of Splunk customers. Analytics is one of my passions: I love digging into the data and teasing out interesting observations you'd otherwise miss.</p>
+					<p>
+						<strong>The idea to build this app came from years of mentoring consultants.</strong>
+						I found that teaching engineers the nuts and bolts of a platform is
+						<i>relatively easy</i>
+						. However, when faced with a complex challenge or sophisticated dataset I often see consultants get stuck:
+					</p>
+					<p>
+						<ul>
+							<li>Who is the audience you're seeking to serve?</li>
+							<li>What meaningful questions are you trying to answer?</li>
+							<li>What process or approach best serves the customer's needs?</li>
+						</ul>
+					</p>
+					<p>
+						<strong>I developed this app to teach engineers how to think.</strong>
+						Building apps and visualizing data are my paintbrush and canvas. It's my art. I hope that by pulling back the curtain and showing you
+						<i>the process</i>
+						will make you a better big data practitioner.
+					</p>
+					<hr />
+					<h2>
+						<b>Tutorial Walkthrough:</b>
+					</h2>
+					<ol>
+						<li>
+							<a href="https://arcusdata.io">Planning Ahead - Tips &amp; approach for developing a Splunk app</a>
+						</li>
+						<li>
+							<a href="https://arcusdata.io">Static Reports are Dead. Why all Splunk dashboards should be interactive</a>
+						</li>
+						<li>
+							<a href="https://arcusdata.io">Listen to your customers! Incorporating feedback into your Splunk Use Cases</a>
+						</li>
+					</ol>
+				</div>
+			</html>
+		</panel>
+		<panel>
+			<html>
+				<div class="arcus">
+					<i class="title fas fa-map-marker-alt" />
+					<span style="font-size:30px; font-weight: 100;">Uber Use Cases</span>
+					<hr />
+					<p class="icon">
+						<i class="fas fa-chart-line" />
+						<a href="/app/arcus_uber_app/uber_dashboard">Executive Dashboard</a>
+					</p>
+					<p>Start off by visiting the Uber Executive Dashboard. This will give you high-level insights into key metrics. It'll also give you a chance to get familiar with the data.</p>
+					<p class="icon">
+						<i class="fas fa-chart-bar" />
+						<a href="https://splunk.arcusdata.io/en-US/app/arcus_ppm_2.0/ppm_executive_view">Advanced Use Cases</a>
+					</p>
+					<p>When you're ready for a deep dive take look at the advanced use cases. These are tough questions I came up with and used Splunk searches to answer:</p>
+					<ul>
+						<li>What's the most expensive city?</li>
+						<li>What time of year do I ride the most?</li>
+						<li>Is there a correlation between time and price?</li>
+						<li>Historical trending of total rides vs. cost?</li>
+						<li>How long do I wait around for uber?</li>
+					</ul>
+					<hr />
+					<p class="icon">
+						<i class="fab fa-github" />
+						<a href="https://github.com/arcus-data/arcus-uber-splunk-app">Fork on GitHub</a>
+					</p>
+					<p>What questions did you come up with? What additional use cases can you build with this data? I've open-sourced the code and made the data publicly available.  Try developing additional use cases and contribute back to the community.</p>
+				</div>
+			</html>
+		</panel>
+		<panel>
+			<html>
+				<div class="arcus">
+					<i class="title fas fa-wrench" />
+					<span style="font-size:30px; font-weight: 100;">Data &amp; Settings</span>
+					<hr />
+					<p>
+						The data source which drives these dashboards is available to anyone with an Uber account. It takes about 1 day for Uber to compile your data. You'll download a .zip file containing
+						<strong>trips_data.csv</strong>
+						.
+					</p>
+					<p class="icon">
+						<i class="fas fa-cloud-download-alt" />
+						<a href="https://accounts.uber.com/privacy/downloadyourdata">Request Uber Data</a>
+					</p>
+					<hr />
+					<br />
+					<br />
+					<br />
+					<br />
+					[Video Goes Here]
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<hr />
+					<h2>
+						<b>Contact us:</b>
+					</h2>
+					<ul>
+						<li>
+							Main Site:
+							<a href="https://arcusdata.io">Arcus Data</a>
+						</li>
+						<li>
+							Arcus Blog:
+							<a href="https://blog.arcusdata.io">Arcus Data Blog</a>
+						</li>
+						<li>
+							GitHub:
+							<a href="https://github.com/arcus-data">@arcus-data</a>
+						</li>
+						<li>
+							Twitter:
+							<a href="https://twitter.com/arcusdata">@arcusdata</a>
+						</li>
+					</ul>
+				</div>
+			</html>
+		</panel>
+	</row>
+</dashboard>

@@ -1,0 +1,269 @@
+<form hideFilters="true">
+  <label>Executive Dashboard</label>
+  <init>
+    <set token="tokCityFilter"></set>
+  </init>
+  <!-- base search -->
+  <search id="baseSearch">
+    <query>
+      index="uber" source="*trips_data.csv" $tokCity$ $tokCityFilter$ earliest_time="$tokTime.earliest$" latest_time="$tokTime.latest$" | table *
+    </query>
+  </search>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="tokCity">
+      <label>City</label>
+      <fieldForLabel>City</fieldForLabel>
+      <fieldForValue>City</fieldForValue>
+      <search>
+        <query>
+            index="uber" source="*trips_data.csv" earliest_time="$tokTime.earliest$" latest_time="$tokTime.latest$" | stats count by City
+          </query>
+      </search>
+      <choice value="*">All Cities</choice>
+      <initialValue>*</initialValue>
+    </input>
+    <input type="time" token="tokTime">
+      <label></label>
+      <default>
+        <earliest>0</earliest>
+        <latest></latest>
+      </default>
+    </input>
+    <input type="checkbox" token="tokFirstCheckBox">
+      <label></label>
+      <choice value="set">Exclude San Diego</choice>
+      <change>
+        <condition value="set">
+          <set token="tokCityFilter">City!="San Diego"</set>
+        </condition>
+        <condition>
+          <set token="tokCityFilter"></set>
+        </condition>
+      </change>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Total Trips</title>
+      <single>
+        <search base="baseSearch">
+          <query>
+            stats count
+          </query>
+        </search>
+        <!-- post-process search -->
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="unit">Trips</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Total Distance</title>
+      <single>
+        <search base="baseSearch">
+          <query>stats sum("Distance _miles")</query>
+        </search>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="unit">Miles</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Total Cost</title>
+      <single>
+        <search base="baseSearch">
+          <query>
+            stats sum("Fare Amount")
+          </query>
+        </search>
+        <!-- post-process search -->
+        <option name="rangeColors">["0xdc4e41","0xdc4e41"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="unit">$</option>
+        <option name="unitPosition">before</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Total Ride Time</title>
+      <single>
+        <search base="baseSearch">
+          <query>
+ | eval end_time_epoch = strptime('Dropoff Time', "%Y-%m-%d %H:%M:%S") 
+ | eval begin_time_epoch = strptime('Begin Trip Time', "%Y-%m-%d %H:%M:%S")
+ | eval duration = end_time_epoch - begin_time_epoch
+ | stats sum(duration) as duration 
+ | eval duration = duration / 60 / 60 / 24</query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0.0</option>
+        <option name="rangeColors">["0x53a051","0x53a051"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="unit">Days</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Total Wait Time</title>
+      <single>
+        <search base="baseSearch">
+          <query>| eval request_time_epoch = strptime('Request Time', "%Y-%m-%d %H:%M:%S") 
+ | eval begin_time_epoch = strptime('Begin Trip Time', "%Y-%m-%d %H:%M:%S")
+ | eval wait_duration = (begin_time_epoch - request_time_epoch) / 60 / 60 / 24
+ | stats sum(wait_duration) as duration</query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0.0</option>
+        <option name="rangeColors">["0xf1813f","0xf1813f"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="unit">Days</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Total Time</title>
+      <single>
+        <search base="baseSearch">
+          <query>
+ | eval request_time_epoch = strptime('Request Time', "%Y-%m-%d %H:%M:%S") 
+ | eval end_time_epoch = strptime('Dropoff Time', "%Y-%m-%d %H:%M:%S") 
+ | eval duration = end_time_epoch - request_time_epoch
+ | stats sum(duration) as duration 
+ | eval duration = duration / 60 / 60 / 24</query>
+        </search>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0.0</option>
+        <option name="rangeColors">["0x006d9c","0x006d9c"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="unit">Days</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Rides Timeline by Product</title>
+      <chart>
+        <search base="baseSearch">
+          <query>| search "Trip or Order Status" = COMPLETED | eval "Product Type" = lower('Product Type') | timechart span=1month  count by "Product Type"</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Product Type</title>
+      <chart>
+        <search base="baseSearch">
+          <query>
+            | eval "Product Type" = lower('Product Type') | stats count by "Product Type"
+          </query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">pie</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Ride Map</title>
+      <map>
+        <search>
+          <query>index="uber" source="*trips_data.csv" $tokCity$ $tokCityFilter$ earliest_time="$tokTime.earliest$" latest_time="$tokTime.latest$" | eval fare = 'Fare Amount' | eval product = lower('Product Type') | geostats  latfield="Begin Trip Lat" longfield="Begin Trip Lng" count(fare) by product</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">481</option>
+        <option name="mapping.choroplethLayer.colorBins">5</option>
+        <option name="mapping.choroplethLayer.colorMode">auto</option>
+        <option name="mapping.choroplethLayer.maximumColor">0xaf575a</option>
+        <option name="mapping.choroplethLayer.minimumColor">0x62b3b2</option>
+        <option name="mapping.choroplethLayer.neutralPoint">0</option>
+        <option name="mapping.choroplethLayer.shapeOpacity">0.75</option>
+        <option name="mapping.choroplethLayer.showBorder">1</option>
+        <option name="mapping.data.maxClusters">100</option>
+        <option name="mapping.legend.placement">bottomright</option>
+        <option name="mapping.map.center">(35.46,-99.18)</option>
+        <option name="mapping.map.panning">1</option>
+        <option name="mapping.map.scrollZoom">0</option>
+        <option name="mapping.map.zoom">4</option>
+        <option name="mapping.markerLayer.markerMaxSize">50</option>
+        <option name="mapping.markerLayer.markerMinSize">10</option>
+        <option name="mapping.markerLayer.markerOpacity">0.8</option>
+        <option name="mapping.showTiles">1</option>
+        <option name="mapping.tileLayer.maxZoom">7</option>
+        <option name="mapping.tileLayer.minZoom">0</option>
+        <option name="mapping.tileLayer.tileOpacity">1</option>
+        <option name="mapping.type">marker</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </map>
+    </panel>
+  </row>
+</form>
