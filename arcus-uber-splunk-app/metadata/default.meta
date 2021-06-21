@@ -1,3 +1,9 @@
+
+# Application-level permissions
+
+[]
+access = read : [ * ], write : [ admin, power ]
+
 [app/ui]
 version = 7.2.4
 modtime = 1549987889.671850000
@@ -6,19 +12,39 @@ modtime = 1549987889.671850000
 version = 7.2.4
 modtime = 1549987889.674271000
 
-[indexes/uber]
-owner = admin
-version = 7.2.4
-modtime = 1549988290.235828000
-
-[indexes/uber_test]
-owner = admin
-version = 7.2.4
-modtime = 1549996432.478345000
-
 [nav/default]
 version = 7.2.4
 modtime = 1550084196.436548000
+
+### EVENT TYPES
+
+[eventtypes]
+export = system
+
+
+### PROPS
+
+[props]
+export = system
+
+
+### TRANSFORMS
+
+[transforms]
+export = system
+
+
+### LOOKUPS
+
+[lookups]
+export = system
+
+
+### VIEWSTATES: even normal users should be able to create shared viewstates
+
+[viewstates]
+access = read : [ * ], write : [ * ]
+export = system
 
 [views/uber_start]
 export = none
