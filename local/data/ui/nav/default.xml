@@ -1,6 +1,0 @@
-<nav search_view="search">
-    <view name="uber_start" default="true" />
-  <view name="uber_exec_dashboard" />
-  <view name="uber_advanced_questions" />
-  <view name="search" />
-</nav>

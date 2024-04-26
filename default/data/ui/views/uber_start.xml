@@ -1,4 +1,4 @@
-<dashboard script="arcus_uber.js" stylesheet="arcus_uber.css">
+<dashboard version="1.1" script="arcus_uber.js" stylesheet="arcus_uber.css">
 	<label>Start</label>
 	<description>This is the overview dashboard when the app loads.</description>
 	<row id="arcus_header">
@@ -14,40 +14,27 @@
 					<i class="title fas fa-car" />
 					<span style="font-size:30px; font-weight: 100;">About Me</span>
 					<hr />
-					<p>For the past decade I've traveled around the country deploying big data solutions to hundreds of Splunk customers. Analytics is one of my passions: I love digging into the data and teasing out interesting observations you'd otherwise miss.</p>
-					<p>
-						<strong>The idea to build this app came from years of mentoring consultants.</strong>
-						I found that teaching engineers the nuts and bolts of a platform is
-						<i>relatively easy</i>
-						. However, when faced with a complex challenge or sophisticated dataset I often see consultants get stuck:
-					</p>
+					<p>Visualizing data and building dashboards are my paintbrush and canvas. It's my art. The <a href="https://blog.arcusdata.io/which-came-first-the-dashboard-or-the-data" target="_blank">idea to build the Uber App</a> came from years of mentoring consultants. I found that teaching engineers the nuts and bolts of a platform is <i>relatively easy</i>. However, when faced with a complex challenges or messy datasets I often see consultants get stuck:</p>
 					<p>
 						<ul>
 							<li>Who is the audience you're seeking to serve?</li>
+							<li>How do your users interact with the dashboards?</li>
 							<li>What meaningful questions are you trying to answer?</li>
 							<li>What process or approach best serves the customer's needs?</li>
 						</ul>
 					</p>
 					<p>
 						<strong>I developed this app to teach engineers how to think.</strong>
-						Building apps and visualizing data are my paintbrush and canvas. It's my art. I hope that by pulling back the curtain and showing you
-						<i>the process</i>
-						will make you a better big data practitioner.
+						Building dashboards that are interactive and well-designed boosts their impact, increases value from Splunk and makes organizations more successful by enabling them to <i>make better data-driven decisions. </i>
 					</p>
 					<hr />
 					<h2>
-						<b>Tutorial Walkthrough:</b>
+						<b>Blog Series Walkthrough:</b>
 					</h2>
 					<ol>
-						<li>
-							<a href="https://arcusdata.io">Planning Ahead - Tips &amp; approach for developing a Splunk app</a>
-						</li>
-						<li>
-							<a href="https://arcusdata.io">Static Reports are Dead. Why all Splunk dashboards should be interactive</a>
-						</li>
-						<li>
-							<a href="https://arcusdata.io">Listen to your customers! Incorporating feedback into your Splunk Use Cases</a>
-						</li>
+						<li><a href="https://blog.arcusdata.io/build-better-dashboards-tips-for-improving-user-experience">Build Better Dashboards - Tips for Improving User Experience</a></li>
+						<li><a href="https://blog.arcusdata.io/which-came-first-the-dashboard-or-the-data">Which Came First: The Dashboard or the Data?</a></li>
+						<li><a href="https://blog.arcusdata.io/i-spent-20k-on-uber-rides">I Spent $20,000 on Uber - Here's what I learned</a></li>
 					</ol>
 				</div>
 			</html>
@@ -60,14 +47,14 @@
 					<hr />
 					<p class="icon">
 						<i class="fas fa-chart-line" />
-						<a href="/app/arcus_uber_app/uber_dashboard">Executive Dashboard</a>
+						<a href="/app/arcus_uber_app/uber_exec_dashboard">Executive Dashboard</a>
 					</p>
-					<p>Start off by visiting the Uber Executive Dashboard. This will give you high-level insights into key metrics. It'll also give you a chance to get familiar with the data.</p>
+					<p>Start by visiting the Uber Executive Dashboard. This will give you high level insights into key metrics. It's also great way to get familiar and start playing with the data.</p>
 					<p class="icon">
 						<i class="fas fa-chart-bar" />
-						<a href="https://splunk.arcusdata.io/en-US/app/arcus_ppm_2.0/ppm_executive_view">Advanced Use Cases</a>
+						<a href="/app/arcus_uber_app/uber_advanced_questions">Advanced Use Cases</a>
 					</p>
-					<p>When you're ready for a deep dive take look at the advanced use cases. These are tough questions I came up with and used Splunk searches to answer:</p>
+					<p>When you're ready for a deep dive fire up the advanced use cases. These are <a href="https://blog.arcusdata.io/which-came-first-the-dashboard-or-the-data" target="_blank">tough questions</a> I came up with and used Splunk searches to answer:</p>
 					<ul>
 						<li>What's the most expensive city?</li>
 						<li>What time of year do I ride the most?</li>
@@ -80,7 +67,7 @@
 						<i class="fab fa-github" />
 						<a href="https://github.com/arcus-data/arcus-uber-splunk-app">Fork on GitHub</a>
 					</p>
-					<p>What questions did you come up with? What additional use cases can you build with this data? I've open-sourced the code and made the data publicly available.  Try developing additional use cases and contribute back to the community.</p>
+					<p>What questions did you come up with? What additional use cases can you build with this data? I've open-sourced the code and made the data publicly available. <strong>Try developing additional use cases and contribute back to the community.</strong></p>
 				</div>
 			</html>
 		</panel>
@@ -91,9 +78,7 @@
 					<span style="font-size:30px; font-weight: 100;">Data &amp; Settings</span>
 					<hr />
 					<p>
-						The data source which drives these dashboards is available to anyone with an Uber account. It takes about 1 day for Uber to compile your data. You'll download a .zip file containing
-						<strong>trips_data.csv</strong>
-						.
+						The data source which drives these dashboards is available to anyone with an Uber account. It takes 1 day for Uber to compile and send back your data. You'll download a .zip file which contains <code>trips_data.csv</code>.
 					</p>
 					<p class="icon">
 						<i class="fas fa-cloud-download-alt" />
