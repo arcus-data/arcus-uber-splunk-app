@@ -1,0 +1,516 @@
+<form version="1.1" hideFilters="true">
+    <label>Uber Questions</label>
+    <init>
+        <set token="tokCityFilter"></set>
+    </init>
+    <!-- base search -->
+    <search id="baseSearch">
+        <query> index="uber" source="*trips_data.csv" $tokCity$ $tokCityFilter$ earliest_time="$tokTime.earliest$" latest_time="$tokTime.latest$" | table *
+        </query>
+    </search>
+    <fieldset submitButton="false">
+        <input type="dropdown" token="tokCity">
+            <label>City</label>
+            <fieldForLabel>City</fieldForLabel>
+            <fieldForValue>City</fieldForValue>
+            <search>
+                <query> index="uber" source="*trips_data.csv" earliest_time="$tokTime.earliest$" latest_time="$tokTime.latest$" | stats count by City
+                </query>
+            </search>
+            <choice value="*">All Cities</choice>
+            <initialValue>*</initialValue>
+            <default>*</default>
+        </input>
+        <input type="time" token="tokTime">
+            <label></label>
+            <default>
+                <earliest>0</earliest>
+                <latest></latest>
+            </default>
+        </input>
+        <input type="checkbox" token="tokFirstCheckBox">
+            <label></label>
+            <choice value="set">Exclude San Diego</choice>
+            <change>
+                <condition value="set">
+                    <set token="tokCityFilter">City!="San Diego"</set>
+                </condition>
+                <condition>
+                    <set token="tokCityFilter"></set>
+                </condition>
+            </change>
+        </input>
+    </fieldset>
+    <row>
+        <panel>
+            <title>Most Expensive City</title>
+            <table>
+                <search base="baseSearch">
+                    <query>stats avg("Fare Amount") as "Average Fare" by City | sort -"Average Fare" | head 10</query>
+                </search>
+                <option name="count">20</option>
+                <option name="dataOverlayMode">heatmap</option>
+                <option name="drilldown">none</option>
+                <option name="percentagesRow">false</option>
+                <option name="rowNumbers">true</option>
+                <option name="totalsRow">false</option>
+                <option name="wrap">true</option>
+                <format type="number" field="Average Fare">
+                    <option name="unit">$</option>
+                    <option name="unitPosition">before</option>
+                </format>
+                <format type="color" field="Average Fare">
+                    <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#FFFFFF"></colorPalette>
+                    <scale type="minMidMax"></scale>
+                </format>
+            </table>
+        </panel>
+        <panel>
+            <title>Most Affordable City</title>
+            <table>
+                <search base="baseSearch">
+                    <query>stats avg("Fare Amount") as "Average Fare" by City | sort "Average Fare" | head 10</query>
+                </search>
+                <option name="count">20</option>
+                <option name="dataOverlayMode">none</option>
+                <option name="drilldown">none</option>
+                <option name="percentagesRow">false</option>
+                <option name="rowNumbers">true</option>
+                <option name="totalsRow">false</option>
+                <option name="wrap">true</option>
+                <format type="number" field="Average Fare">
+                    <option name="unit">$</option>
+                    <option name="unitPosition">before</option>
+                </format>
+                <format type="color" field="Average Fare">
+                    <colorPalette type="minMidMax" maxColor="#006D9C" minColor="#FFFFFF"></colorPalette>
+                    <scale type="minMidMax"></scale>
+                </format>
+            </table>
+        </panel>
+    </row>
+    <row>
+        <panel>
+            <title>What time of year do I ride the most?</title>
+            <chart>
+                <search base="baseSearch">
+                    <query> top date_month | sort -count</query>
+                </search>
+                <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+                <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+                <option name="charting.axisTitleX.visibility">visible</option>
+                <option name="charting.axisTitleY.visibility">visible</option>
+                <option name="charting.axisTitleY2.visibility">visible</option>
+                <option name="charting.axisX.abbreviation">none</option>
+                <option name="charting.axisX.scale">linear</option>
+                <option name="charting.axisY.abbreviation">none</option>
+                <option name="charting.axisY.scale">linear</option>
+                <option name="charting.axisY2.abbreviation">none</option>
+                <option name="charting.axisY2.enabled">0</option>
+                <option name="charting.axisY2.scale">inherit</option>
+                <option name="charting.chart">column</option>
+                <option name="charting.chart.bubbleMaximumSize">50</option>
+                <option name="charting.chart.bubbleMinimumSize">10</option>
+                <option name="charting.chart.bubbleSizeBy">area</option>
+                <option name="charting.chart.nullValueMode">gaps</option>
+                <option name="charting.chart.showDataLabels">none</option>
+                <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+                <option name="charting.chart.stackMode">default</option>
+                <option name="charting.chart.style">shiny</option>
+                <option name="charting.drilldown">none</option>
+                <option name="charting.layout.splitSeries">0</option>
+                <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+                <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+                <option name="charting.legend.mode">standard</option>
+                <option name="charting.legend.placement">none</option>
+                <option name="charting.lineWidth">2</option>
+                <option name="trellis.enabled">0</option>
+                <option name="trellis.scales.shared">1</option>
+                <option name="trellis.size">medium</option>
+            </chart>
+        </panel>
+    </row>
+    <row>
+        <panel>
+            <title>Is there a correlation between Distance and Price?</title>
+            <chart>
+                <search base="baseSearch">
+                    <query>table "Distance _miles" "Fare Amount"</query>
+                </search>
+                <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+                <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+                <option name="charting.axisTitleX.visibility">visible</option>
+                <option name="charting.axisTitleY.visibility">visible</option>
+                <option name="charting.axisTitleY2.visibility">visible</option>
+                <option name="charting.axisX.abbreviation">none</option>
+                <option name="charting.axisX.scale">linear</option>
+                <option name="charting.axisY.abbreviation">none</option>
+                <option name="charting.axisY.scale">linear</option>
+                <option name="charting.axisY2.abbreviation">none</option>
+                <option name="charting.axisY2.enabled">0</option>
+                <option name="charting.axisY2.scale">inherit</option>
+                <option name="charting.chart">scatter</option>
+                <option name="charting.chart.bubbleMaximumSize">50</option>
+                <option name="charting.chart.bubbleMinimumSize">10</option>
+                <option name="charting.chart.bubbleSizeBy">area</option>
+                <option name="charting.chart.nullValueMode">gaps</option>
+                <option name="charting.chart.showDataLabels">none</option>
+                <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+                <option name="charting.chart.stackMode">default</option>
+                <option name="charting.chart.style">shiny</option>
+                <option name="charting.drilldown">none</option>
+                <option name="charting.layout.splitSeries">0</option>
+                <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+                <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+                <option name="charting.legend.mode">standard</option>
+                <option name="charting.legend.placement">right</option>
+                <option name="charting.lineWidth">2</option>
+                <option name="trellis.enabled">0</option>
+                <option name="trellis.scales.shared">1</option>
+                <option name="trellis.size">medium</option>
+            </chart>
+        </panel>
+    </row>
+    <row>
+        <panel>
+            <title>Is there a correlation between Time of  Day and Price?</title>
+            <chart>
+                <search base="baseSearch">
+                    <query>eval hour=strftime(_time,"%H") | table hour "Distance _miles" "Fare Amount"</query>
+                </search>
+                <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+                <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+                <option name="charting.axisTitleX.visibility">visible</option>
+                <option name="charting.axisTitleY.visibility">visible</option>
+                <option name="charting.axisTitleY2.visibility">visible</option>
+                <option name="charting.axisX.abbreviation">none</option>
+                <option name="charting.axisX.scale">linear</option>
+                <option name="charting.axisY.abbreviation">none</option>
+                <option name="charting.axisY.scale">linear</option>
+                <option name="charting.axisY2.abbreviation">none</option>
+                <option name="charting.axisY2.enabled">0</option>
+                <option name="charting.axisY2.scale">inherit</option>
+                <option name="charting.chart">bubble</option>
+                <option name="charting.chart.bubbleMaximumSize">50</option>
+                <option name="charting.chart.bubbleMinimumSize">10</option>
+                <option name="charting.chart.bubbleSizeBy">area</option>
+                <option name="charting.chart.nullValueMode">gaps</option>
+                <option name="charting.chart.showDataLabels">none</option>
+                <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+                <option name="charting.chart.stackMode">default</option>
+                <option name="charting.chart.style">shiny</option>
+                <option name="charting.drilldown">none</option>
+                <option name="charting.layout.splitSeries">0</option>
+                <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+                <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+                <option name="charting.legend.mode">standard</option>
+                <option name="charting.legend.placement">right</option>
+                <option name="charting.lineWidth">2</option>
+                <option name="trellis.enabled">0</option>
+                <option name="trellis.scales.shared">1</option>
+                <option name="trellis.size">medium</option>
+            </chart>
+        </panel>
+    </row>
+    <row>
+        <panel>
+            <title>What does the trend look like for Total Rides and Total Cost?</title>
+            <chart>
+                <search base="baseSearch">
+                    <query>eval "Fare Amount" = round('Fare Amount',0) | timechart span=1y count as "Number of Rides", sum("Fare Amount") as "Total Spend" 
+                    </query>
+                </search>
+                <option name="charting.axisTitleX.visibility">collapsed</option>
+                <option name="charting.axisTitleY.visibility">collapsed</option>
+                <option name="charting.axisTitleY2.visibility">visible</option>
+                <option name="charting.axisX.scale">linear</option>
+                <option name="charting.axisY.scale">linear</option>
+                <option name="charting.axisY2.enabled">1</option>
+                <option name="charting.axisY2.fields">"Total Spend"</option>
+                <option name="charting.axisY2.scale">inherit</option>
+                <option name="charting.chart">column</option>
+                <option name="charting.chart.overlayFields">"Total Spend"</option>
+                <option name="charting.fieldColors">{"Number of Rides": 0x639BF1, "Total Spend":0xFF5A09}</option>
+                <option name="charting.legend.masterLegend">null</option>
+                <option name="charting.legend.placement">bottom</option>
+                <option name="height">300</option>
+            </chart>
+        </panel>
+    </row>
+    <row>
+        <panel>
+            <title>What time of day do I take most rides?</title>
+            <chart>
+                <search base="baseSearch">
+                    <query>eval hour=strftime(_time,"%H") | stats count by hour | sort hour</query>
+                </search>
+                <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+                <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+                <option name="charting.axisTitleX.visibility">visible</option>
+                <option name="charting.axisTitleY.visibility">visible</option>
+                <option name="charting.axisTitleY2.visibility">visible</option>
+                <option name="charting.axisX.abbreviation">none</option>
+                <option name="charting.axisX.scale">linear</option>
+                <option name="charting.axisY.abbreviation">none</option>
+                <option name="charting.axisY.scale">linear</option>
+                <option name="charting.axisY2.abbreviation">none</option>
+                <option name="charting.axisY2.enabled">0</option>
+                <option name="charting.axisY2.scale">inherit</option>
+                <option name="charting.chart">area</option>
+                <option name="charting.chart.bubbleMaximumSize">50</option>
+                <option name="charting.chart.bubbleMinimumSize">10</option>
+                <option name="charting.chart.bubbleSizeBy">area</option>
+                <option name="charting.chart.nullValueMode">gaps</option>
+                <option name="charting.chart.showDataLabels">all</option>
+                <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+                <option name="charting.chart.stackMode">default</option>
+                <option name="charting.chart.style">shiny</option>
+                <option name="charting.drilldown">none</option>
+                <option name="charting.layout.splitSeries">0</option>
+                <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+                <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+                <option name="charting.legend.mode">standard</option>
+                <option name="charting.legend.placement">right</option>
+                <option name="charting.lineWidth">2</option>
+                <option name="height">289</option>
+                <option name="trellis.enabled">0</option>
+                <option name="trellis.scales.shared">1</option>
+                <option name="trellis.size">medium</option>
+            </chart>
+        </panel>
+    </row>
+    <row>
+        <panel>
+            <title>How long am I waiting?</title>
+            <chart>
+                <search base="baseSearch">
+                    <query>| eval hour=strftime(_time,"%H") 
+ | eval request_time_epoch = strptime('Request Time', "%Y-%m-%d %H:%M:%S") 
+ | eval begin_time_epoch = strptime('Begin Trip Time', "%Y-%m-%d %H:%M:%S")
+ | eval wait_duration = (begin_time_epoch - request_time_epoch) / 60
+ | stats avg(wait_duration) as "Average Wait" max(wait_duration) as "Max Wait" by hour</query>
+                </search>
+                <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+                <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+                <option name="charting.axisTitleX.visibility">visible</option>
+                <option name="charting.axisTitleY.visibility">visible</option>
+                <option name="charting.axisTitleY2.visibility">visible</option>
+                <option name="charting.axisX.abbreviation">none</option>
+                <option name="charting.axisX.scale">linear</option>
+                <option name="charting.axisY.abbreviation">none</option>
+                <option name="charting.axisY.scale">linear</option>
+                <option name="charting.axisY2.abbreviation">none</option>
+                <option name="charting.axisY2.enabled">0</option>
+                <option name="charting.axisY2.scale">inherit</option>
+                <option name="charting.chart">column</option>
+                <option name="charting.chart.bubbleMaximumSize">50</option>
+                <option name="charting.chart.bubbleMinimumSize">10</option>
+                <option name="charting.chart.bubbleSizeBy">area</option>
+                <option name="charting.chart.nullValueMode">gaps</option>
+                <option name="charting.chart.showDataLabels">none</option>
+                <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+                <option name="charting.chart.stackMode">stacked</option>
+                <option name="charting.chart.style">shiny</option>
+                <option name="charting.drilldown">none</option>
+                <option name="charting.layout.splitSeries">0</option>
+                <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+                <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+                <option name="charting.legend.mode">standard</option>
+                <option name="charting.legend.placement">right</option>
+                <option name="charting.lineWidth">2</option>
+                <option name="height">417</option>
+                <option name="refresh.display">progressbar</option>
+                <option name="trellis.enabled">1</option>
+                <option name="trellis.scales.shared">0</option>
+                <option name="trellis.size">large</option>
+                <option name="trellis.splitBy">_aggregation</option>
+            </chart>
+        </panel>
+    </row>
+    <row>
+        <panel>
+            <title>Has Uber improved their service over the years?</title>
+            <chart>
+                <search base="baseSearch">
+                    <query>eval hour=strftime(_time,"%H") 
+ | eval request_time_epoch = strptime('Request Time', "%Y-%m-%d %H:%M:%S") 
+ | eval begin_time_epoch = strptime('Begin Trip Time', "%Y-%m-%d %H:%M:%S")
+ | eval wait_duration = (begin_time_epoch - request_time_epoch) / 60
+ | timechart span=1month avg(wait_duration) as "Average Wait Time"
+ | eval "Average Wait Time" = round('Average Wait Time', 1)</query>
+                </search>
+                <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+                <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+                <option name="charting.axisTitleX.visibility">visible</option>
+                <option name="charting.axisTitleY.visibility">visible</option>
+                <option name="charting.axisTitleY2.visibility">visible</option>
+                <option name="charting.axisX.abbreviation">none</option>
+                <option name="charting.axisX.scale">linear</option>
+                <option name="charting.axisY.abbreviation">none</option>
+                <option name="charting.axisY.scale">linear</option>
+                <option name="charting.axisY2.abbreviation">none</option>
+                <option name="charting.axisY2.enabled">0</option>
+                <option name="charting.axisY2.scale">inherit</option>
+                <option name="charting.chart">area</option>
+                <option name="charting.chart.bubbleMaximumSize">50</option>
+                <option name="charting.chart.bubbleMinimumSize">10</option>
+                <option name="charting.chart.bubbleSizeBy">area</option>
+                <option name="charting.chart.nullValueMode">zero</option>
+                <option name="charting.chart.showDataLabels">none</option>
+                <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+                <option name="charting.chart.stackMode">default</option>
+                <option name="charting.chart.style">shiny</option>
+                <option name="charting.drilldown">none</option>
+                <option name="charting.layout.splitSeries">0</option>
+                <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+                <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+                <option name="charting.legend.mode">standard</option>
+                <option name="charting.legend.placement">right</option>
+                <option name="charting.lineWidth">2</option>
+                <option name="refresh.display">progressbar</option>
+                <option name="trellis.enabled">0</option>
+                <option name="trellis.scales.shared">1</option>
+                <option name="trellis.size">medium</option>
+            </chart>
+        </panel>
+    </row>
+    <row>
+        <panel>
+            <title>Longest Wait</title>
+            <table>
+                <search>
+                    <query>index = uber
+| eval hour=strftime(_time,"%H") 
+ | eval request_time_epoch = strptime('Request Time', "%Y-%m-%d %H:%M:%S") 
+ | eval begin_time_epoch = strptime('Begin Trip Time', "%Y-%m-%d %H:%M:%S")
+ | eval wait_duration = (begin_time_epoch - request_time_epoch) / 60
+ | stats avg(wait_duration) as "Average Wait" by City | sort -"Average Wait" | head 10</query>
+                    <earliest>0</earliest>
+                    <latest></latest>
+                    <sampleRatio>1</sampleRatio>
+                </search>
+                <option name="count">20</option>
+                <option name="dataOverlayMode">none</option>
+                <option name="drilldown">none</option>
+                <option name="percentagesRow">false</option>
+                <option name="refresh.display">progressbar</option>
+                <option name="rowNumbers">true</option>
+                <option name="totalsRow">false</option>
+                <option name="wrap">true</option>
+                <format type="color" field="avg(wait_duration)">
+                    <colorPalette type="minMidMax" maxColor="#53A051" minColor="#FFFFFF"></colorPalette>
+                    <scale type="minMidMax"></scale>
+                </format>
+                <format type="number" field="Average Wait">
+                    <option name="precision">1</option>
+                </format>
+                <format type="color" field="Average Wait">
+                    <colorPalette type="minMidMax" maxColor="#DC4E41" minColor="#FFFFFF"></colorPalette>
+                    <scale type="minMidMax"></scale>
+                </format>
+            </table>
+        </panel>
+        <panel>
+            <title>Shortest Wait</title>
+            <table>
+                <search>
+                    <query>index = uber
+| eval hour=strftime(_time,"%H") 
+ | eval request_time_epoch = strptime('Request Time', "%Y-%m-%d %H:%M:%S") 
+ | eval begin_time_epoch = strptime('Begin Trip Time', "%Y-%m-%d %H:%M:%S")
+ | eval wait_duration = (begin_time_epoch - request_time_epoch) / 60
+ | stats avg(wait_duration) as "Average Wait" by City | sort "Average Wait" | head 10</query>
+                    <earliest>0</earliest>
+                    <sampleRatio>1</sampleRatio>
+                </search>
+                <option name="count">20</option>
+                <option name="dataOverlayMode">highlow</option>
+                <option name="drilldown">none</option>
+                <option name="percentagesRow">false</option>
+                <option name="rowNumbers">true</option>
+                <option name="totalsRow">false</option>
+                <option name="wrap">true</option>
+                <format type="color" field="Average Wait">
+                    <colorPalette type="minMidMax" maxColor="#53A051" minColor="#FFFFFF"></colorPalette>
+                    <scale type="minMidMax"></scale>
+                </format>
+                <format type="number" field="Average Wait">
+                    <option name="precision">1</option>
+                </format>
+            </table>
+        </panel>
+    </row>
+    <row>
+        <panel>
+            <title>Average Fare</title>
+            <chart>
+                <search>
+                    <query>index=uber | timechart avg("Fare Amount") as "Average Fare"</query>
+                    <earliest>0</earliest>
+                    <sampleRatio>1</sampleRatio>
+                </search>
+                <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+                <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+                <option name="charting.axisTitleX.visibility">visible</option>
+                <option name="charting.axisTitleY.visibility">visible</option>
+                <option name="charting.axisTitleY2.visibility">visible</option>
+                <option name="charting.axisX.abbreviation">none</option>
+                <option name="charting.axisX.scale">linear</option>
+                <option name="charting.axisY.abbreviation">none</option>
+                <option name="charting.axisY.scale">linear</option>
+                <option name="charting.axisY2.abbreviation">none</option>
+                <option name="charting.axisY2.enabled">0</option>
+                <option name="charting.axisY2.scale">inherit</option>
+                <option name="charting.chart">area</option>
+                <option name="charting.chart.bubbleMaximumSize">50</option>
+                <option name="charting.chart.bubbleMinimumSize">10</option>
+                <option name="charting.chart.bubbleSizeBy">area</option>
+                <option name="charting.chart.nullValueMode">zero</option>
+                <option name="charting.chart.showDataLabels">none</option>
+                <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+                <option name="charting.chart.stackMode">default</option>
+                <option name="charting.chart.style">shiny</option>
+                <option name="charting.drilldown">none</option>
+                <option name="charting.layout.splitSeries">0</option>
+                <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+                <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+                <option name="charting.legend.mode">standard</option>
+                <option name="charting.legend.placement">right</option>
+                <option name="charting.lineWidth">2</option>
+                <option name="trellis.enabled">0</option>
+                <option name="trellis.scales.shared">1</option>
+                <option name="trellis.size">medium</option>
+            </chart>
+        </panel>
+        <panel>
+            <title>Current Trend</title>
+            <single>
+                <search>
+                    <query>index=uber | timechart avg("Fare Amount")</query>
+                    <earliest>0</earliest>
+                    <sampleRatio>1</sampleRatio>
+                </search>
+                <option name="colorBy">trend</option>
+                <option name="colorMode">none</option>
+                <option name="drilldown">none</option>
+                <option name="height">245</option>
+                <option name="numberPrecision">0.00</option>
+                <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+                <option name="rangeValues">[0,30,70,100]</option>
+                <option name="showSparkline">1</option>
+                <option name="showTrendIndicator">1</option>
+                <option name="trellis.enabled">0</option>
+                <option name="trellis.scales.shared">1</option>
+                <option name="trellis.size">medium</option>
+                <option name="trendColorInterpretation">inverse</option>
+                <option name="trendDisplayMode">absolute</option>
+                <option name="trendInterval">-1q</option>
+                <option name="underLabel">Compared to Previous Quarter</option>
+                <option name="unit">$</option>
+                <option name="unitPosition">before</option>
+                <option name="useColors">1</option>
+                <option name="useThousandSeparators">1</option>
+            </single>
+        </panel>
+    </row>
+</form>
