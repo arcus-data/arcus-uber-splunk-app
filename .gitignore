@@ -1,0 +1,15 @@
+# Build artifacts
+arcus_uber_app-*.tar.gz
+appinspect.txt
+
+# Splunk runtime
+local/
+metadata/local.meta
+
+# macOS
+.DS_Store
+._*
+
+# IDE
+.idea/
+.vscode/
